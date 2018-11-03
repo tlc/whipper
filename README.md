@@ -235,8 +235,8 @@ options:
 
 ```INI
 [main]
-path_filter_fat = True		; replace FAT file system unsafe characters in filenames with _
-path_filter_special = False	; replace special characters in filenames with _
+path_filter_posix = True		; replace unsafe filename characters on POSIX platforms with _
+path_filter_vfat = False                ; replace VFAT file system unsafe characters in filenames with _
 
 [musicbrainz]
 server = musicbrainz.org:80	; use MusicBrainz server at host[:port]

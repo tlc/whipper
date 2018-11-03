@@ -26,42 +26,18 @@ class PathFilter(object):
     I filter path components for safe storage on file systems.
     """
 
-    def __init__(self, slashes=True, quotes=True, fat=True, special=False):
+    def __init__(self, posix=True, vfat=False):
         """
-        @param slashes: whether to convert slashes to dashes
-        @param quotes:  whether to normalize quotes
-        @param fat:     whether to strip characters illegal on FAT filesystems
-        @param special: whether to strip special characters
+        @param posix:   whether to strip characters illegal on POSIX platforms
+        @param vfat:    whether to strip characters illegal on VFAT filesystems
         """
-        self._slashes = slashes
-        self._quotes = quotes
-        self._fat = fat
-        self._special = special
+        self._posix = posix
+        self._vfat = vfat
 
     def filter(self, path):
-        if self._slashes:
-            path = re.sub(r'[/\\]', '-', path, re.UNICODE)
-
-        def separators(path):
-            # replace separators with a space-hyphen or hyphen
-            path = re.sub(r'[:]', ' -', path, re.UNICODE)
-            path = re.sub(r'[\|]', '-', path, re.UNICODE)
-            return path
-
-        # change all fancy single/double quotes to normal quotes
-        if self._quotes:
-            path = re.sub(ur'[\xc2\xb4\u2018\u2019\u201b]', "'", path,
-                          re.UNICODE)
-            path = re.sub(ur'[\u201c\u201d\u201f]', '"', path, re.UNICODE)
-
-        if self._special:
-            path = separators(path)
-            path = re.sub(r'[\*\?&!\'\"\$\(\)`{}\[\]<>]',
-                          '_', path, re.UNICODE)
-
-        if self._fat:
-            path = separators(path)
-            # : and | already gone, but leave them here for reference
-            path = re.sub(r'[:\*\?"<>|"]', '_', path, re.UNICODE)
-
+        if self._posix:
+            path = re.sub(r'[\/\x00]', '_', path, re.UNICODE)
+        if self._vfat:
+            path = re.sub(r'[\x00-\x1F\x7F\"\*\/\:\<\>\?\\\|]', '_',
+                          path, re.UNICODE)
         return path
