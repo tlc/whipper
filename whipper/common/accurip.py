@@ -143,7 +143,7 @@ def _download_entry(path):
 
 def get_db_entry(path):
     """
-    Downloads entry from accuraterip.com.
+    Download entry from accuraterip.com.
 
     `path' is in the format of the output of table.accuraterip_path().
     """
