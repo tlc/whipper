@@ -13,6 +13,3 @@ class DirectoryTestCase(common.TestCase):
     def testAll(self):
         path = directory.config_path()
         self.assertTrue(path.startswith(DirectoryTestCase.HOME_PARENT))
-
-        path = directory.cache_path()  # FIXME: maybe drop this one?
-        self.assertTrue(path.startswith(DirectoryTestCase.HOME_PARENT))
