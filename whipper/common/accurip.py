@@ -21,11 +21,7 @@
 
 import requests
 import struct
-from errno import EEXIST
-from os import makedirs
-from os.path import dirname, exists, join
 
-from whipper.common import directory
 from whipper.program.arc import accuraterip_checksum
 
 import logging
@@ -33,7 +29,6 @@ logger = logging.getLogger(__name__)
 
 
 ACCURATERIP_URL = "http://www.accuraterip.com/accuraterip/"
-_CACHE_DIR = join(directory.cache_path(), 'accurip')
 
 
 class EntryNotFound(Exception):
@@ -146,33 +141,13 @@ def _download_entry(path):
     return resp.content
 
 
-def _save_entry(raw_entry, path):
-    logger.debug('saving AccurateRip entry to %s', path)
-    # XXX: os.makedirs(exist_ok=True) in py3
-    try:
-        makedirs(dirname(path))
-    except OSError as e:
-        if e.errno != EEXIST:
-            logger.error('could not save entry to %s: %s', path, e)
-            return
-    open(path, 'wb').write(raw_entry)
-
-
 def get_db_entry(path):
     """
-    Retrieve cached AccurateRip disc entry as array of _AccurateRipResponses.
-    Downloads entry from accuraterip.com on cache fault.
+    Downloads entry from accuraterip.com.
 
     `path' is in the format of the output of table.accuraterip_path().
     """
-    cached_path = join(_CACHE_DIR, path)
-    if exists(cached_path):
-        logger.debug('found accuraterip entry at %s', cached_path)
-        raw_entry = open(cached_path, 'rb').read()
-    else:
-        raw_entry = _download_entry(path)
-        if raw_entry:
-            _save_entry(raw_entry, cached_path)
+    raw_entry = _download_entry(path)
     if not raw_entry:
         logger.warning('entry not found in AccurateRip database')
         raise EntryNotFound
