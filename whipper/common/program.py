@@ -69,6 +69,7 @@ class Program:
         d = {}
 
         for key, default in list({
+            'dot': True,
             'posix': True,
             'vfat': False
         }.items()):

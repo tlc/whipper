@@ -26,18 +26,24 @@ class PathFilter(object):
     I filter path components for safe storage on file systems.
     """
 
-    def __init__(self, posix=True, vfat=False):
+    def __init__(self, dot=True, posix=True, vfat=False):
         """
-        @param posix:   whether to strip characters illegal on POSIX platforms
-        @param vfat:    whether to strip characters illegal on VFAT filesystems
+        @param dot:   whether to strip leading dot
+        @param posix: whether to strip characters illegal on POSIX platforms
+        @param vfat:  whether to strip characters illegal on VFAT filesystems
         """
+        self._dot = dot
         self._posix = posix
         self._vfat = vfat
 
     def filter(self, path):
+        R_CH = u'_'
+        if self._dot:
+            if path[0] == u'.':
+                path = R_CH + path[1:]
         if self._posix:
-            path = re.sub(r'[\/\x00]', '_', path, re.UNICODE)
+            path = re.sub(r'[\/\x00]', R_CH, path, re.UNICODE)
         if self._vfat:
-            path = re.sub(r'[\x00-\x1F\x7F\"\*\/\:\<\>\?\\\|]', '_',
+            path = re.sub(r'[\x00-\x1F\x7F\"\*\/\:\<\>\?\\\|]', R_CH,
                           path, re.UNICODE)
         return path
