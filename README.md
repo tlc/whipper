@@ -235,9 +235,10 @@ options:
 
 ```INI
 [main]
-path_filter_dot = True                ; replace leading dot with _
-path_filter_posix = True		; replace unsafe filename characters on POSIX platforms with _
-path_filter_vfat = False                ; replace VFAT file system unsafe characters in filenames with _
+path_filter_dot = True			; replace leading dot with _
+path_filter_posix = True		; replace usually illegal chars in *nix OSes with _
+path_filter_vfat = False		; replace illegal chars in VFAT filesystems with _
+path_filter_printable = False		; replace all non printable ASCII chars with _
 
 [musicbrainz]
 server = musicbrainz.org:80	; use MusicBrainz server at host[:port]

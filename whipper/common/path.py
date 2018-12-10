@@ -26,15 +26,17 @@ class PathFilter(object):
     I filter path components for safe storage on file systems.
     """
 
-    def __init__(self, dot=True, posix=True, vfat=False):
+    def __init__(self, dot=True, posix=True, vfat=False, printable=False):
         """
-        @param dot:   whether to strip leading dot
-        @param posix: whether to strip characters illegal on POSIX platforms
-        @param vfat:  whether to strip characters illegal on VFAT filesystems
+        @param dot:       whether to strip leading dot
+        @param posix:     whether to strip usually illegal chars in *nix OSes
+        @param vfat:      whether to strip illegal chars in VFAT filesystems
+        @param printable: whether to strip all non printable ASCII chars
         """
         self._dot = dot
         self._posix = posix
         self._vfat = vfat
+        self._printable = printable
 
     def filter(self, path):
         R_CH = u'_'
@@ -46,4 +48,6 @@ class PathFilter(object):
         if self._vfat:
             path = re.sub(r'[\x00-\x1F\x7F\"\*\/\:\<\>\?\\\|]', R_CH,
                           path, re.UNICODE)
+        if self._printable:
+            path = re.sub(r'[^\x20-\x7E]', R_CH, path, re.UNICODE)
         return path
