@@ -88,7 +88,7 @@ class Program:
             os.chdir(workingDirectory)
 
     @staticmethod
-    def getFastToc(runner, device):
+    def getFastToc(device):
         """Retrieve the normal TOC table from the drive.
         Also warn about buggy cdrdao versions.
         """
@@ -101,7 +101,7 @@ class Program:
         assert toc.hasTOC()
         return toc
 
-    def getTable(self, runner, cddbdiscid, mbdiscid, device, offset,
+    def getTable(self, cddbdiscid, mbdiscid, device, offset,
                  out_path):
         """
         Retrieve the Table either from the cache or the drive.

@@ -96,7 +96,7 @@ class _CD(BaseCommand):
 
         # first, read the normal TOC, which is fast
         logger.info("reading TOC...")
-        self.ittoc = self.program.getFastToc(self.runner, self.device)
+        self.ittoc = self.program.getFastToc(self.device)
 
         # already show us some info based on this
         self.program.getRipResult(self.ittoc.getCDDBDiscId())
@@ -144,8 +144,7 @@ class _CD(BaseCommand):
                                          self.mbdiscid,
                                          self.program.metadata)
         # now, read the complete index table, which is slower
-        self.itable = self.program.getTable(self.runner,
-                                            self.ittoc.getCDDBDiscId(),
+        self.itable = self.program.getTable(self.ittoc.getCDDBDiscId(),
                                             self.ittoc.getMusicBrainzDiscId(),
                                             self.device, self.options.offset,
                                             out_fpath)
