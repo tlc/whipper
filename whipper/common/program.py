@@ -81,12 +81,14 @@ class Program:
 
         self._filter = path.PathFilter(**d)
 
-    def setWorkingDirectory(self, workingDirectory):
+    @staticmethod
+    def setWorkingDirectory(workingDirectory):
         if workingDirectory:
             logger.info('changing to working directory %s', workingDirectory)
             os.chdir(workingDirectory)
 
-    def getFastToc(self, runner, device):
+    @staticmethod
+    def getFastToc(runner, device):
         """Retrieve the normal TOC table from the drive.
         Also warn about buggy cdrdao versions.
         """
@@ -157,7 +159,8 @@ class Program:
     def saveRipResult(self):
         self._presult.persist()
 
-    def addDisambiguation(self, template_part, metadata):
+    @staticmethod
+    def addDisambiguation(template_part, metadata):
         """Add disambiguation to template path part string."""
         if metadata.catalogNumber:
             template_part += ' (%s)' % metadata.catalogNumber
@@ -235,7 +238,8 @@ class Program:
         template = re.sub(r'%(\w)', r'%(\1)s', template)
         return os.path.join(outdir, template % v)
 
-    def getCDDB(self, cddbdiscid):
+    @staticmethod
+    def getCDDB(cddbdiscid):
         """
         @param cddbdiscid: list of id, tracks, offsets, seconds
 
@@ -457,7 +461,8 @@ class Program:
         stop = track.getIndex(1).absolute - 1
         return start, stop
 
-    def verifyTrack(self, runner, trackResult):
+    @staticmethod
+    def verifyTrack(runner, trackResult):
         is_wave = not trackResult.filename.endswith('.flac')
         t = checksum.CRC32Task(trackResult.filename, is_wave=is_wave)
 
