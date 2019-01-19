@@ -8,24 +8,21 @@ RUN apt-get update \
   autoconf libtool curl \
   && pip install pycdio==2.0.0
 
-# libcdio-paranoia / libcdio-utils are wrongfully packaged in Debian, thus built manually
-# see https://github.com/whipper-team/whipper/pull/237#issuecomment-367985625
-RUN curl -o - 'https://ftp.gnu.org/gnu/libcdio/libcdio-2.0.0.tar.gz' | tar zxf - \
-  && cd libcdio-2.0.0 \
-  && autoreconf -fi \
-  && ./configure --disable-dependency-tracking --disable-cxx --disable-example-progs --disable-static \
+# Xiph cdparanoia with patches
+RUN curl -Lo - 'http://downloads.xiph.org/releases/cdparanoia/cdparanoia-III-10.2.src.tgz' | tar zxf - \
+  && cd cdparanoia-III-10.2 \
+  && curl -Lo 01-overread.patch 'http://lists.xiph.org/pipermail/paranoia-dev/attachments/20130730/e4d81f91/attachment.obj' \
+  && curl -Lo 02-overread_data.patch 'http://lists.xiph.org/pipermail/paranoia-dev/attachments/20130730/e4d81f91/attachment-0001.obj' \
+  && curl -Lo cdparanoia-longest-match.patch 'https://savannah.gnu.org/bugs/download.php?file_id=39207' \
+  && patch < 01-overread.patch \
+  && patch < 02-overread_data.patch \
+  && patch -p1 < cdparanoia-longest-match.patch \
+  && ./configure \
+  && make all \
   && make install \
   && cd .. \
-  && rm -rf libcdio-2.0.0
-
-# Install cd-paranoia from tarball
-RUN curl -o - 'https://ftp.gnu.org/gnu/libcdio/libcdio-paranoia-10.2+0.94+2.tar.gz' | tar zxf - \
-  && cd libcdio-paranoia-10.2+0.94+2 \
-  && autoreconf -fi \
-  && ./configure --disable-dependency-tracking --disable-example-progs --disable-static \
-  && make install \
-  && cd .. \ 
-  && rm -rf libcdio-paranoia-10.2+0.94+2
+  && rm -rf cdparanoia-III-10.2 \
+  && ln -s /usr/local/bin/cdparanoia /usr/local/bin/cd-paranoia
 
 RUN ldconfig
 
